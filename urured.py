@@ -221,8 +221,7 @@ in {total_scan_time} seconds between {started_time}...{end_time}\n""")
         main()
 
     except KeyboardInterrupt:
-        print(f"\n\n{Colors.WHITE}Copyright (c) 2023 yzee4")
-        sys.exit()
+        main()
 
 # Interface
 def MainMenu():
