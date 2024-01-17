@@ -71,7 +71,6 @@ initializing_dustox()
 
 # Principal scanning logic
 def scan_network():
-    print(f"\n{Colors.LIGHT_RED}> {Colors.WHITE}Scanning...")
     # --localnet flag
     if timescan != None:
         timescanvalue = int(timescan)
@@ -104,6 +103,7 @@ def scan_network():
         repeatcounter = 1
         repeatvalue = int(repeat)
         for _ in range(repeatvalue):
+            print(f"\n{Colors.LIGHT_RED}> {Colors.WHITE}Scanning...")
             global started_time
             startedlocaltime = time.localtime()
             started_time = (time.strftime("%H:%M:%S", startedlocaltime))
