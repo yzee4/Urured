@@ -368,7 +368,9 @@ def main():
 
         elif userselect == "3":
             print(f"""\n1 {Colors.LIGHT_RED}>{Colors.WHITE} repeat = {Colors.LIGHT_GREEN}{repeat}{Colors.WHITE}
-2 {Colors.LIGHT_RED}>{Colors.WHITE} time to scan = {Colors.LIGHT_GREEN}{timescan}{Colors.WHITE}""")
+2 {Colors.LIGHT_RED}>{Colors.WHITE} time to scan = {Colors.LIGHT_GREEN}{timescan}{Colors.WHITE}
+
+3 {Colors.LIGHT_RED}>{Colors.WHITE} Cancel""")
             userselect = input(f"\nSet the option you will change {Colors.LIGHT_RED}>{Colors.WHITE} ")
 
             if userselect == "1":
@@ -399,6 +401,9 @@ def main():
                     timescan = None
                 print(f"Timescan set to {Colors.LIGHT_GREEN}{timescan}{Colors.WHITE}")
                 time.sleep(0.50)
+                main()
+
+            elif userselect == "3":
                 main()
             
             else:
