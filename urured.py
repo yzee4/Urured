@@ -1,8 +1,8 @@
-# Dustox by Yzee4
+# Dustox by yzee4
 #
 # MIT License
 #
-# Copyright (c) 2023 Yzee4
+# Copyright (c) 2023 yzee4
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Code version BAGABU
+# Code version QUI18JAN012024
 
 # Import libraries
 import os
@@ -31,8 +31,7 @@ import sys
 import time
 import signal
 import shutil
-import argparse
-import threading
+import readline
 import subprocess
 
 # Define colors
@@ -94,9 +93,9 @@ def scan_network():
         command_list.append(*local_ips_with_subnet)
     
     if root:
-        command = ['nmap', '-O', '-open','-T5', *command_list]
+        command = ['nmap', '-O', '-open', '-T5', *command_list]
     else:
-        command = ['nmap', '-open','-T5', *command_list]
+        command = ['nmap', '-open', '-T5', *command_list]
 
     # -ip flag
     try:
@@ -178,7 +177,7 @@ def scan_network():
                             chars_to_add = max(0, 9 - len(port))
                             port = port + f"{Colors.YELLOW} " * chars_to_add
                             print(f"{Colors.WHITE}{port}{Colors.YELLOW}{Colors.WHITE}{service}")
-                            
+
                     # Not found open ports
                     else:
                         if num_ips_scanned > 0:
@@ -227,29 +226,30 @@ in {total_scan_time} seconds between {started_time}...{end_time}\n""")
 def MainMenu():
     global interface
     interface = f"""{Colors.WHITE}Urured {Colors.WHITE}- {Colors.LIGHT_GREEN}Open {Colors.WHITE}Port {Colors.WHITE}Scanner{Colors.WHITE}
-{Colors.LIGHT_RED}-| {Colors.WHITE}GitHub {Colors.LIGHT_GREEN}https://github.com/yzee4/Urured{Colors.WHITE}\n
-{Colors.LIGHT_RED}       █████████              ████
-█████████████████        █████████████
-███████████████████      █████████████████
-███████████████████     ████████████████████
-██████████████████     ███████████████████████
-██████████████████    █████████████████████████
-████████████████████████████████████████████████
-████████████████████████████████████████████████
-█████████████████████████████████           ███
-███████████████████████████████
-██████████████████████████████
-███████████  ████████████████ 
-██████████     █████████████  [ {Colors.WHITE}coded by yzee4 {Colors.LIGHT_RED}]
-█████████       ██████████
-████████
-{Colors.LIGHT_RED}███████      {Colors.WHITE}1 {Colors.LIGHT_RED}> {Colors.WHITE}Local IP address     
-{Colors.LIGHT_RED}██████       {Colors.WHITE}2 {Colors.LIGHT_RED}> {Colors.WHITE}Specified IP address
-{Colors.LIGHT_RED}█████
-{Colors.LIGHT_RED}████         {Colors.WHITE}3 {Colors.LIGHT_RED}> {Colors.WHITE}Options
-{Colors.LIGHT_RED}███          {Colors.WHITE}4 {Colors.LIGHT_RED}> {Colors.WHITE}Info
-{Colors.LIGHT_RED}██           {Colors.WHITE}5 {Colors.LIGHT_RED}> {Colors.WHITE}Exit
-{Colors.LIGHT_RED}█{Colors.WHITE}
+{Colors.LIGHT_RED}-| {Colors.WHITE}GitHub {Colors.LIGHT_GREEN}https://github.com/yzee4/Urured{Colors.WHITE}
+
+     {Colors.LIGHT_RED}       █████████              ████              
+     {Colors.LIGHT_RED}█████████████████        █████████████          
+     {Colors.LIGHT_RED}███████████████████      █████████████████      
+  {Colors.WHITE}U  {Colors.LIGHT_RED}███████████████████     ████████████████████    
+     {Colors.LIGHT_RED}██████████████████     ███████████████████████  
+     {Colors.LIGHT_RED}██████████████████    █████████████████████████ 
+  {Colors.WHITE}R  {Colors.LIGHT_RED}████████████████████████████████████████████████
+     {Colors.LIGHT_RED}████████████████████████████████████████████████
+     {Colors.LIGHT_RED}█████████████████████████████████           ███ 
+  {Colors.WHITE}U  {Colors.LIGHT_RED}███████████████████████████████                 
+     {Colors.LIGHT_RED}██████████████████████████████                  
+     {Colors.LIGHT_RED}███████████  ████████████████                   
+  {Colors.LIGHT_RED}R  {Colors.LIGHT_RED}██████████     █████████████      {Colors.WHITE}coded by yzee4{Colors.LIGHT_RED}
+     {Colors.LIGHT_RED}█████████       ██████████                      
+     {Colors.LIGHT_RED}████████                                        
+  {Colors.LIGHT_RED}E  {Colors.LIGHT_RED}███████      {Colors.WHITE}1 {Colors.LIGHT_RED}> {Colors.WHITE}Local IP address               
+     {Colors.LIGHT_RED}██████       {Colors.WHITE}2 {Colors.LIGHT_RED}> {Colors.WHITE}Specified IP address           
+     {Colors.LIGHT_RED}█████                                           
+  {Colors.LIGHT_RED}D  {Colors.LIGHT_RED}████         {Colors.WHITE}3 {Colors.LIGHT_RED}> {Colors.WHITE}Options                        
+     {Colors.LIGHT_RED}███          {Colors.WHITE}4 {Colors.LIGHT_RED}> {Colors.WHITE}Info                           
+     {Colors.LIGHT_RED}██           {Colors.WHITE}5 {Colors.LIGHT_RED}> {Colors.WHITE}Exit                           
+     {Colors.LIGHT_RED}█                                               {Colors.WHITE}
 """                                           
 MainMenu()
 
@@ -300,6 +300,8 @@ options()
 def main():
     subprocess.run("clear")
     print(f"{interface}")
+    global menu
+    menu = 1
     global repeat
     global timescan
     argsip = None
@@ -310,9 +312,14 @@ def main():
     global command_list
     command_list = []
 
+    
     try:
         userselect = input(f"""{Colors.LIGHT_RED}----| {Colors.WHITE}Select option {Colors.LIGHT_RED}>{Colors.WHITE} """)
+    except KeyboardInterrupt:
+        print(f"\n{Colors.WHITE}Copyright (c) 2023 Yzee4")
+        sys.exit(0)
 
+    try:
         # Local IP address
         if userselect == "1":
             localnet = True
@@ -421,7 +428,7 @@ open ports of local or specified IP address. It features some filters
 that make your search easier. Its interface facilitates the 
 visualization of information, as it is simple and contains 
 elements that facilitate the interpretation of results
-              
+            
 {Colors.WHITE}For more information visit project documentation on GitHub\n""")
         
             input(f"{Colors.WHITE}Enter any key for back {Colors.LIGHT_RED}> {Colors.WHITE}")
