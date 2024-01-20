@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Code version QUI18JAN012024
+# Code version BAGABU
 
 # Import libraries
 import os
@@ -87,22 +87,32 @@ def scan_network():
         result = subprocess.run("ip route | grep -oP 'src \K\S+' | head -n 1", shell=True, capture_output=True, text=True)
         local_ips = result.stdout.splitlines()
         if len(local_ips) == 0:
-            print(f"{Colors.LIGHT_RED}> {Colors.WHITE}Failed to scan local network ip")
+            print(f"\n{Colors.LIGHT_RED}> {Colors.WHITE}Failed to scan local network ip")
+            print()
+            input(f"{Colors.WHITE}Enter any key for back {Colors.LIGHT_RED}> {Colors.WHITE}")
+            main()
             sys.exit(0)
         local_ips_with_subnet = [ip + "/24" for ip in local_ips]
         command_list.append(*local_ips_with_subnet)
     
+
     if root:
-        command = ['nmap', '-O', '-open', '-T5', *command_list]
+        if onlyopen == f"{Colors.LIGHT_GREEN}true":
+            command = ['nmap', '-O', '-open', '-T5', *command_list]
+        else:
+            command = ['nmap', '-O', '-T5', *command_list]
     else:
-        command = ['nmap', '-open', '-T5', *command_list]
+        if onlyopen == f"{Colors.LIGHT_GREEN}true":
+            command = ['nmap', '-open', '-T5', *command_list]
+        else:
+            command = ['nmap', '-T5', *command_list]
 
     # -ip flag
     try:
         repeatcounter = 1
         repeatvalue = int(repeat)
         for _ in range(repeatvalue):
-            print(f"\n{Colors.LIGHT_RED}> {Colors.WHITE}Scanning...")
+            print(f"{Colors.LIGHT_RED}> {Colors.WHITE}Scanning...")
             global started_time
             startedlocaltime = time.localtime()
             started_time = (time.strftime("%H:%M:%S", startedlocaltime))
@@ -130,7 +140,7 @@ def scan_network():
                 match_os = re.search(r'OS details: (.+)', paragraph)
 
                 if match_host:
-                    print(f"\n{Colors.LIGHT_GREEN}----| IP: {Colors.WHITE}") 
+                    print(f"\n{Colors.LIGHT_GREEN}----| IP: {Colors.WHITE}{argsip}") 
                     print(f"{Colors.LIGHT_RED}> {Colors.WHITE}No response")
 
                 if match_ip:
@@ -165,17 +175,20 @@ def scan_network():
 
                     print(f"""{Colors.LIGHT_GREEN}NAME: {Colors.WHITE}{name}\n{Colors.LIGHT_GREEN}MAC:  {Colors.WHITE}{mac}\n{Colors.LIGHT_GREEN}OS:   {Colors.WHITE}{os}""")
 
-                    if found_port:
+                    if found_port == True:
                         print(f"{Colors.LIGHT_GREEN}PORT     {Colors.LIGHT_GREEN}SERVICE")
 
                         match_ports = re.finditer(r'(\d+/[a-zA-Z-0-9]+)\s+(open)\s+([a-zA-Z-0-9]+)', paragraph)
+
+                        if not match_ports:
+                            print("oi")
                         for match in match_ports:
                             num_ports_scanned += 1
                             port = match.group(1).split("/")[0]
                             service = match.group(3)
 
                             chars_to_add = max(0, 9 - len(port))
-                            port = port + f"{Colors.YELLOW} " * chars_to_add
+                            port = port + f" " * chars_to_add
                             print(f"{Colors.WHITE}{port}{Colors.YELLOW}{Colors.WHITE}{service}")
 
                     # Not found open ports
@@ -183,7 +196,7 @@ def scan_network():
                         if num_ips_scanned > 0:
                             print(f"{Colors.LIGHT_RED}> {Colors.WHITE}No open ports")
                     num_ips_scanned += 1
-                    
+
             # Extracting scanning time
             if "Nmap done" in paragraph:
                 endlocaltime = time.localtime()
@@ -258,6 +271,8 @@ def is_valid_ip(argsip):
     ip_pattern = r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$'
     if argsip == '0.0.0.0':
         return False
+    if argsip == "":
+        return False
     if re.match(ip_pattern, argsip):
         parts = argsip.split('.')
         for part in parts:
@@ -294,6 +309,8 @@ def options():
     repeat = 1
     global timescan
     timescan = None 
+    global onlyopen
+    onlyopen = f"{Colors.LIGHT_GREEN}true"
 options()
 
 # Flags management
@@ -302,8 +319,10 @@ def main():
     print(f"{interface}")
     global menu
     menu = 1
+    global onlyopen
     global repeat
     global timescan
+    global argsip
     argsip = None
     argsport = None
     rangeip = None
@@ -316,7 +335,7 @@ def main():
     try:
         userselect = input(f"""{Colors.LIGHT_RED}----| {Colors.WHITE}Select option {Colors.LIGHT_RED}>{Colors.WHITE} """)
     except KeyboardInterrupt:
-        print(f"\n{Colors.WHITE}Copyright (c) 2023 Yzee4")
+        print(f"\n{Colors.WHITE}Copyright (c) 2023 yzee4")
         sys.exit(0)
 
     try:
@@ -341,11 +360,24 @@ def main():
 
         # Specified IP address
         elif userselect == "2":
-            argsip = input(f"Set {Colors.LIGHT_GREEN}IP address {Colors.LIGHT_RED}>{Colors.WHITE} ") 
+            # Input ip and validate
+            argsip = input(f"Set {Colors.LIGHT_GREEN}IP address {Colors.LIGHT_RED}>{Colors.WHITE} ")
+            if argsip == "":
+                print(f"{Colors.LIGHT_RED}> {Colors.WHITE}Invalid IP address format")
+                time.sleep(0.5)
+                main()
+            if argsip and not is_valid_ip(argsip):
+                print(f"{Colors.LIGHT_RED}> {Colors.WHITE}Invalid IP address format")
+                time.sleep(0.5)
+                main()
 
             userselect = input(f"Scans {Colors.LIGHT_GREEN}all {Colors.WHITE}ranges? [Y/n/c] {Colors.LIGHT_RED}>{Colors.WHITE} ")
             if userselect == "Y" or userselect == "y":
                 rangeip = True
+                if rangeip:
+                    command_list.append(argsip+"-255")
+                else:
+                    command_list.append(argsip)                  
             
             elif userselect == "N" or userselect == "n":
                 pass
@@ -369,15 +401,17 @@ def main():
                 main()
                 
             else:
-                print(f"\n{Colors.LIGHT_RED}> {Colors.WHITE}Invalid option")
+                print(f"{Colors.LIGHT_RED}> {Colors.WHITE}Invalid option")
                 time.sleep(0.15)
                 main()
 
         elif userselect == "3":
             print(f"""\n1 {Colors.LIGHT_RED}>{Colors.WHITE} repeat = {Colors.LIGHT_GREEN}{repeat}{Colors.WHITE}
 2 {Colors.LIGHT_RED}>{Colors.WHITE} time to scan = {Colors.LIGHT_GREEN}{timescan}{Colors.WHITE}
+3 {Colors.LIGHT_RED}>{Colors.WHITE} only show ip addresses with open ports = {onlyopen}{Colors.WHITE}
 
-3 {Colors.LIGHT_RED}>{Colors.WHITE} Cancel""")
+4 {Colors.LIGHT_RED}>{Colors.WHITE} reset all options to {Colors.LIGHT_GREEN}deafult{Colors.WHITE}
+5 {Colors.LIGHT_RED}>{Colors.WHITE} Cancel""")
             userselect = input(f"\nSet the option you will change {Colors.LIGHT_RED}>{Colors.WHITE} ")
 
             if userselect == "1":
@@ -400,7 +434,7 @@ def main():
                     timescan = None
                 elif not timescan == None:
                     if timescan and not is_valid_timescan(timescan):
-                        print(f"\n{Colors.LIGHT_RED}> {Colors.WHITE}Invalid timescan value")
+                        print(f"{Colors.LIGHT_RED}> {Colors.WHITE}Invalid timescan value")
                         timescan = 1
                         time.sleep(0.5)
                         main()
@@ -411,17 +445,39 @@ def main():
                 main()
 
             elif userselect == "3":
+                onlyopen = input(f"Set {Colors.LIGHT_GREEN}show only open ports IP address{Colors.WHITE} value [T/f] {Colors.LIGHT_RED}>{Colors.WHITE} ")
+                if not (onlyopen.lower() == "t" or onlyopen.lower() == "f"):
+                    print(f"{Colors.LIGHT_RED}> {Colors.WHITE}Invalid value")
+                    time.sleep(0.5)
+                    main()
+                if onlyopen.lower() == "t":
+                    onlyopen = f"{Colors.LIGHT_GREEN}true"
+
+                if onlyopen.lower() == "f":
+                    onlyopen = f"{Colors.LIGHT_RED}false"
+
+                print(f"Show only open ports IP address {Colors.WHITE}set to {onlyopen}{Colors.WHITE}")
+                time.sleep(0.5)
+                main()
+
+            elif userselect == "4":
+                print(f"All options reset to {Colors.LIGHT_GREEN}deafult{Colors.WHITE}")
+                time.sleep(0.5)
+                options()
+                main()
+
+            elif userselect == "5":
                 main()
             
             else:
-                print(f"\n{Colors.LIGHT_RED}> {Colors.WHITE}Invalid option")
+                print(f"{Colors.LIGHT_RED}> {Colors.WHITE}Invalid option")
                 time.sleep(0.15)
                 main()
 
         elif userselect == "4":
             print(f"""
 Coded by yzee4
-Version 1.1.0 (Urured default version)
+Version 1.1.5 (Urured default version)
 
 {Colors.LIGHT_GREEN}Urured is a simple open port scanner, with it you can see all
 open ports of local or specified IP address. It features some filters 
@@ -435,31 +491,22 @@ elements that facilitate the interpretation of results
             main()
 
         elif userselect == "5":
-            print(f"{Colors.WHITE}Copyright (c) 2023 Yzee4")
+            print(f"{Colors.WHITE}Copyright (c) 2023 yzee4")
             sys.exit(0)
 
         else:
-            print(f"\n{Colors.LIGHT_RED}> {Colors.WHITE}Invalid option")
+            print(f"{Colors.LIGHT_RED}> {Colors.WHITE}Invalid option")
             time.sleep(0.15)
             main()
 
-        # Variables validation
-        if argsip:
-            if argsip and not is_valid_ip(argsip):
-                print(f"\n{Colors.LIGHT_RED}> {Colors.WHITE}Invalid IP address format")
-                time.sleep(0.5)
-                main()
-            if rangeip:
-                command_list.append(argsip+"-255")
-            else:
-                command_list.append(argsip) 
-
         if argsport:
             if argsport and not is_valid_port(argsport):
-                print(f"\n{Colors.LIGHT_RED}> {Colors.WHITE}Invalid port format")
-                sys.exit()
+                print(f"{Colors.LIGHT_RED}> {Colors.WHITE}Invalid port format")
+                time.sleep(0.15)
+                main()
             command_list.append(f"-p {argsport}")
 
+        print()
         scan_network()
     except KeyboardInterrupt:
         main()
