@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Code version BAGABU
+# Code version SAB20JAN0124
 
 # Import libraries
 import os
@@ -175,7 +175,7 @@ def scan_network():
 
                     print(f"""{Colors.LIGHT_GREEN}NAME: {Colors.WHITE}{name}\n{Colors.LIGHT_GREEN}MAC:  {Colors.WHITE}{mac}\n{Colors.LIGHT_GREEN}OS:   {Colors.WHITE}{os}""")
 
-                    if found_port == True:
+                    if found_port:
                         print(f"{Colors.LIGHT_GREEN}PORT     {Colors.LIGHT_GREEN}SERVICE")
 
                         match_ports = re.finditer(r'(\d+/[a-zA-Z-0-9]+)\s+(open)\s+([a-zA-Z-0-9]+)', paragraph)
@@ -477,7 +477,7 @@ def main():
         elif userselect == "4":
             print(f"""
 Coded by yzee4
-Version 1.1.5 (Urured default version)
+Version 1.1.5 (Urured default version) SAB20JAN0124
 
 {Colors.LIGHT_GREEN}Urured is a simple open port scanner, with it you can see all
 open ports of local or specified IP address. It features some filters 
