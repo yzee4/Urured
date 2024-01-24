@@ -88,7 +88,7 @@ def scan_network():
         result = subprocess.run("ip route | grep -oP 'src \K\S+' | head -n 1", shell=True, capture_output=True, text=True)
         local_ips = result.stdout.splitlines()
         if len(local_ips) == 0:
-            print(f"\n{Colors.LIGHT_RED}> {Colors.WHITE}Failed to scan local network ip\n")
+            print(f"{Colors.LIGHT_RED}> {Colors.WHITE}Failed to scan local network ip\n")
             input(f"{Colors.WHITE}Enter any key for back {Colors.LIGHT_RED}> {Colors.WHITE}")
             main()
             sys.exit(0)
