@@ -291,7 +291,7 @@ in {total_scan_time} seconds between {started_time}...{end_time}\n""")
 def MainMenu():
     global interface
     interface = f"""{Colors.WHITE}Urured {Colors.WHITE}- {Colors.LIGHT_GREEN}Open {Colors.WHITE}Port {Colors.WHITE}Scanner{Colors.WHITE}
-{Colors.LIGHT_RED}-| {Colors.WHITE}GitHub {Colors.LIGHT_GREEN}https://github.com/yzee4/Urured{Colors.WHITE}
+{Colors.LIGHT_RED}-| {Colors.WHITE}GitHub {Colors.LIGHT_GREEN}https://github.com/yzee4/Urured.git{Colors.WHITE}
 
      {Colors.LIGHT_RED}       █████████              ████              
      {Colors.LIGHT_RED}█████████████████        █████████████          
