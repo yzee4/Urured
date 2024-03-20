@@ -55,7 +55,7 @@ def check_tool_installed(tool_name):
     return shutil.which(tool_name) is not None
 
 def initializing_urured():
-    tools_to_check = ['nmap', 'net-tools']
+    tools_to_check = ['nmap']
     not_installed_tools = [tool for tool in tools_to_check if not check_tool_installed(tool)]
     
     if not_installed_tools:
